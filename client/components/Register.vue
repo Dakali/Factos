@@ -2,12 +2,12 @@
   <div>
     <h2>Register</h2>
     <form @submit.prevent="createUser()">
-      <input v-model="email" placeholder="email">
+      <input v-model="pseudo" placeholder="email">
       <input
       type="password" v-model="password"
       placeholder="password"
       >
-      <button type="submit">Se crée r un compte</button>
+      <button type="submit">Se créer un compte</button>
     </form>
   </div>
 </template>
@@ -20,7 +20,7 @@ module.exports = {
   },
   data () {
     return {
-      email: '',
+      pseudo: '',
       password: ''
     }
   },
@@ -29,7 +29,7 @@ module.exports = {
   methods: {
     async createUser() {
       await axios.post('/api/register', {
-        email: this.email,
+        pseudo: this.pseudo,
         password: this.password
       })
       this.$router.push('/')

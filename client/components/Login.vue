@@ -3,7 +3,7 @@
     <h2>Login</h2>
     <!-- TODO -->
     <form @submit.prevent="loginUser()">
-      <input v-model="email" placeholder="email">
+      <input v-model="pseudo" placeholder="email">
       <input
       type="password" v-model="password"
       placeholder="password"
@@ -21,7 +21,7 @@ module.exports = {
   },
   data () {
     return {
-      email: '',
+      pseudo: '',
       password: ''
     }
   },
@@ -30,7 +30,7 @@ module.exports = {
   methods: {
     async loginUser() {
       this.$emit('login', {
-        email: this.email,
+        pseudo: this.pseudo,
         password: this.password
       })
     }

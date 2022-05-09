@@ -4,7 +4,7 @@ const router = express.Router()
 const bcrypt = require('bcrypt');
 
 const {Sequelize} = require("sequelize");
-const sequelize = new Sequelize("db_tp5", "root", "",
+const sequelize = new Sequelize("eftheque", "root", "",
     {
       dialect: "mysql",
       host: "localhost"
@@ -55,66 +55,196 @@ router.use((req, res, next) => {
 })
 
 router.post('/login', async (req, res) => {
-  const email = req.body.email
+  const pseudo = req.body.pseudo
   const password = req.body.password
 
-  const result = await client.query({
-    text: 'SELECT * FROM users WHERE email=$1',
-    values: [email]
-  })
+  try {
+    sequelize.authenticate();
+    await sequelize.query("SELECT *  FROM user WHERE login = '"+pseudo+"'")
+        .then(
+            ([result,metadata])=>{
+              // console.log(result);
+              // res.json(result);
+              //création de l'utilisateur à partir des infos trouvés
+              const user = result[0]
 
-  if (result.rows.length === 0) {
-    res.status(401).json({
-      message: 'user doesnt exist'
-    })
-    return
+              if ( bcrypt.compare(password, user.pwd)) {
+                // alors connecter l'utilisateur
+                req.session.userId = user.id
+                res.json({
+                  id: user.id_user,
+                  pseudo: user.login
+                })
+              } else {
+                res.status(401).json({
+                  message: 'Mauvais mot de passe'
+                })
+                return
+              }
+            }
+        );
+  } catch (error) {
+      res.status(401).json({
+        message: 'Utilisateur inexistant!'
+      })
+    console.error('Problème de connexion, l\'erreur est la suivante:',
+        error);
   }
-  // si on a pas trouvé l'utilisateur
-  // alors on le crée
-  const user = result.rows[0]
 
-  if (await bcrypt.compare(password, user.password)) {
-    // alors connecter l'utilisateur
-    req.session.userId = user.id
-    res.json({
-      id: user.id,
-      email: user.email
-    })
-  } else {
-    res.status(401).json({
-      message: 'bad password'
-    })
-    return
-  }
+  // const result = await client.query({
+  //   text: 'SELECT * FROM users WHERE email=$1',
+  //   values: [email]
+  // })
+
+  // if (result.rows.length === 0) {
+  //   res.status(401).json({
+  //     message: 'user doesnt exist'
+  //   })
+  //   return
+  // }
+  // // si on a pas trouvé l'utilisateur
+  // // alors on le crée
+  // const user = result.rows[0]
+  //
+  // if (await bcrypt.compare(password, user.password)) {
+  //   // alors connecter l'utilisateur
+  //   req.session.userId = user.id
+  //   res.json({
+  //     id: user.id,
+  //     email: user.email
+  //   })
+  // } else {
+  //   res.status(401).json({
+  //     message: 'bad password'
+  //   })
+  //   return
+  // }
 })
 
 router.post('/register', async (req, res) => {
-  const email = req.body.email
+  const pseudo = req.body.pseudo
   const password = req.body.password
 
-  const result = await client.query({
-    text: 'SELECT * FROM users WHERE email=$1',
-    values: [email]
-  })
 
-  if (result.rows.length > 0) {
+  try {
+    sequelize.authenticate();
+    await sequelize.query("SELECT *  FROM user WHERE login = '"+pseudo+"'")
+        .then(
+            ([result,metadata])=>{
+              // console.log(result);
+              // res.json(result);
+              //création de l'utilisateur à partir des infos trouvés
+
+              console.log("l: "+result.length)
+              if (result.length > 0){
+                   res.status(401).json({
+                     message: 'Ce login est déjà utilisé'
+                   })
+                   return
+              }
+              // const user = result[0]
+
+              // // si on a pas trouvé l'utilisateur
+              // // alors on le crée
+
+
+
+
+
+                const hashPassword = async (password, saltRounds = 10) => {
+                    try {
+                        // Generate a salt
+                        const salt = await bcrypt.genSalt(saltRounds);
+
+                        // Hash password
+                        return await bcrypt.hash(password, salt);
+                    } catch (error) {
+                        console.log(error);
+                    }
+
+                    // Return null if error
+                    return null;
+                };
+
+
+                (async () => {
+                    const hash = await hashPassword(password);
+
+
+                    // TODO: store hash in a database
+                    try{
+                        sequelize.authenticate();
+                        sequelize.query("INSERT INTO user(`login`, `pwd`, `profil`, `actif`)  VALUES('"+pseudo+"','"+hash+"','ETUDIANT',1)")
+                            .then(
+                                ([result,metadata])=> {
+                                    console.log(hash);
+                                    res.send('ok')
+                                })
+
+                    }catch (error){
+                        res.status(401).json({
+                            message: 'Une erreur lors de la création du compte est survenue! Veuillez réessayer!'
+                        })
+                    }
+                })();
+
+
+
+
+
+
+
+
+               // const hash =  bcrypt.hash(password, 10)
+
+
+               // try{
+               //   sequelize.authenticate();
+               //   sequelize.query("INSERT INTO user(`login`, `pwd`, `profil`, `actif`)  VALUES('"+pseudo+"','"+hash+"','ETUDIANT',1)")
+               //       .then(
+               //           ([result,metadata])=> {
+               //             console.log(hash);
+               //           })
+               //
+               // }catch (error){
+               //   res.status(401).json({
+               //     message: 'Une erreur lors de la création du compte est survenue! Veuillez réessayer!'
+               //   })
+               // }
+
+            }
+        );
+  } catch (error) {
     res.status(401).json({
-      message: 'user already exists'
+      message: 'Utilisateur inexistant!'
     })
-    return
+    console.error('Problème de connexion, l\'erreur est la suivante:',
+        error);
   }
-  // si on a pas trouvé l'utilisateur
-  // alors on le crée
 
-  const hash = await bcrypt.hash(password, 10)
+  // const result = await client.query({
+  //   text: 'SELECT * FROM users WHERE email=$1',
+  //   values: [email]
+  // })
 
-  await client.query({
-    text: `INSERT INTO users(email, password)
-    VALUES ($1, $2)
-    `,
-    values: [email, hash]
-  })
-  res.send('ok')
+  // if (result.rows.length > 0) {
+  //   res.status(401).json({
+  //     message: 'user already exists'
+  //   })
+  //   return
+  // }
+  // // si on a pas trouvé l'utilisateur
+  // // alors on le crée
+  //
+  // const hash = await bcrypt.hash(password, 10)
+
+  // await client.query({
+  //   text: `INSERT INTO users(email, password)
+  //   VALUES ($1, $2)
+  //   `,
+  //   values: [email, hash]
+  // })
+  // res.send('ok')
 })
 
 router.get('/me', async (req, res) => {
@@ -123,12 +253,12 @@ router.get('/me', async (req, res) => {
     return
   }
 
-  const result = await client.query({
-    text: 'SELECT id, email FROM users WHERE id=$1',
-    values: [req.session.userId]
-  })
+  // const result = await client.query({
+  //   text: 'SELECT id, email FROM users WHERE id=$1',
+  //   values: [req.session.userId]
+  // })
 
-  res.json(result.rows[0])
+  // res.json(result.rows[0])
 })
 
 /*
@@ -178,10 +308,10 @@ router.delete('/panier/:articleId', (req, res) => {
  * Cette route envoie l'intégralité des articles du site
  */
 router.get('/articles', async (req, res) => {
-  const result = await client.query({
-    text: 'SELECT * FROM articles'
-  })
-  res.json(result.rows)
+  // const result = await client.query({
+  //   text: 'SELECT * FROM articles'
+  // })
+  // res.json(result.rows)
 })
 
 /**
@@ -206,23 +336,23 @@ router.post('/article', async (req, res) => {
   }
 
   // articles.push(article)
-  const result = await client.query({
-    text: `INSERT INTO articles(name, description, image, price)
-    VALUES ($1, $2, $3, $4)
-    RETURNING *
-    `,
-    values: [name, description, image, price]
-  })
-  const id = result.rows[0].id
+  // const result = await client.query({
+  //   text: `INSERT INTO articles(name, description, image, price)
+  //   VALUES ($1, $2, $3, $4)
+  //   RETURNING *
+  //   `,
+  //   values: [name, description, image, price]
+  // })
+  // const id = result.rows[0].id
 
   // on envoie l'article ajouté à l'utilisateur
-  res.json({
-    id: id,
-    name: name,
-    description: description,
-    image: image,
-    price: price
-  })
+  // res.json({
+  //   id: id,
+  //   name: name,
+  //   description: description,
+  //   image: image,
+  //   price: price
+  // })
 })
 
 /**
@@ -244,18 +374,18 @@ async function parseArticle (req, res, next) {
   // on affecte req.articleId pour l'exploiter dans toutes les routes qui en ont besoin
   req.articleId = articleId
 
-  const result = await client.query({
-    text: 'SELECT * FROM articles WHERE id=$1',
-    values: [articleId]
-  })
+  // const result = await client.query({
+  //   text: 'SELECT * FROM articles WHERE id=$1',
+  //   values: [articleId]
+  // })
   // const article = articles.find(a => a.id === req.articleId)
-  if (!result.rows.length) {
-    res.status(404).json({ message: 'article ' + articleId + ' does not exist' })
-    return
-  }
-  // on affecte req.article pour l'exploiter dans toutes les routes qui en ont besoin
-  req.article = result.rows[0]
-  next()
+  // if (!result.rows.length) {
+  //   res.status(404).json({ message: 'article ' + articleId + ' does not exist' })
+  //   return
+  // }
+  // // on affecte req.article pour l'exploiter dans toutes les routes qui en ont besoin
+  // req.article = result.rows[0]
+  // next()
 }
 
 router.route('/article/:articleId')
@@ -279,24 +409,24 @@ router.route('/article/:articleId')
     const image = req.body.image
     const price = parseInt(req.body.price)
 
-    await client.query({
-      text: `UPDATE articles
-              SET name=$1,
-                  description=$2,
-                  image=$3,
-                  price=$4
-            WHERE id=$5
-            `,
-      values: [name, description, image, price, req.articleId]
-    })
+    // await client.query({
+    //   text: `UPDATE articles
+    //           SET name=$1,
+    //               description=$2,
+    //               image=$3,
+    //               price=$4
+    //         WHERE id=$5
+    //         `,
+    //   values: [name, description, image, price, req.articleId]
+    // })
     res.send()
   })
 
   .delete(parseArticle, async (req, res) => {
-    await client.query({
-      text: 'DELETE FROM articles WHERE id=$1',
-      values: [req.articleId]
-    })
+    // await client.query({
+    //   text: 'DELETE FROM articles WHERE id=$1',
+    //   values: [req.articleId]
+    // })
     res.send()
   })
 

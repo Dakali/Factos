@@ -8,7 +8,7 @@ const apiRouter = require('./routes/api.js')
 
 const app = express()
 const {Sequelize} = require("sequelize");
-const sequelize = new Sequelize("db_tp5", "root", "",
+const sequelize = new Sequelize("eftheque", "root", "",
     {
         dialect: "mysql",
         host: "localhost"
