@@ -1,19 +1,20 @@
 <template>
   <div>
-    <article v-for="article in articles" :key="article.id">
+    <article v-for="livre in livres" :key="livre.id">
       <div class="article-img">
-        <div :style="{ backgroundImage: 'url(' + article.image + ')' }">
+        <div :style="{ backgroundImage: 'url(' + livre.img + ')' }" class="img">
         </div>
       </div>
-      <div class="article-content" v-if="editingArticle.id !== article.id">
+      <div class="article-content" v-if="editingArticle.id !== livre.id">
         <div class="article-title">
-          <h2>{{ article.name }} - {{ article.price }}€</h2>
+          <h2>{{ livre.title }} - {{ livre.auth }}</h2>
           <div>
-          <button @click="deleteArticle(article.id)">Supprimer</button>
-          <button @click="editArticle(article)">Modifier</button>
+          <button @click="deleteArticle(livre.id_livre)">Supprimer</button>
+          <button @click="editArticle(livre)">Modifier</button>
           </div>
         </div>
-        <p>{{ article.description }}</p>
+        <p>{{ livre.description }}</p>
+        <p>{{ livre.qty }}</p>
       </div>
       <div class="article-content" v-else>
         <div class="article-title">
@@ -27,21 +28,21 @@
         <input type="text" v-model="editingArticle.image" placeholder="Lien vers l'image">
       </div>
     </article>
-    <form @submit.prevent="addArticle">
-      <h2>Nouveau produit à ajouter</h2>
-      <input type="text" v-model="newArticle.name" placeholder="Nom du produit" required>
-      <input type="number" v-model="newArticle.price" placeholder="Prix" required>
-      <textarea type="text" v-model="newArticle.description" required></textarea>
-      <input type="text" v-model="newArticle.image" placeholder="Lien vers l'image">
-      <button type="submit">Ajouter</button>
-    </form>
+<!--    <form @submit.prevent="addArticle">-->
+<!--      <h2>Nouveau produit à ajouter</h2>-->
+<!--      <input type="text" v-model="newArticle.name" placeholder="Nom du produit" required>-->
+<!--      <input type="number" v-model="newArticle.price" placeholder="Prix" required>-->
+<!--      <textarea type="text" v-model="newArticle.description" required></textarea>-->
+<!--      <input type="text" v-model="newArticle.image" placeholder="Lien vers l'image">-->
+<!--      <button type="submit">Ajouter</button>-->
+<!--    </form>-->
   </div>
 </template>
 
 <script>
 module.exports = {
   props: {
-    articles: { type: Array, default: [] },
+    livres: { type: Array, default: [] },
     panier: { type: Object }
   },
   data () {
@@ -99,6 +100,10 @@ article {
 
 .article-img {
   flex: 1;
+}
+.img{
+  border: 3px solid #004AAD;
+  border-radius: 25%;
 }
 
 .article-img div {

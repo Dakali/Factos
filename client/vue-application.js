@@ -18,18 +18,18 @@ var app = new Vue({
   router,
   el: '#app',
   data: {
-    articles: [],
+    livres: [],
     panier: {
       createdAt: null,
       updatedAt: null,
-      articles: []
+      livres: []
     },
     user: {},
     isConnected: false
   },
   async mounted () {
-    const res = await axios.get('/api/articles')
-    this.articles = res.data
+    const res = await axios.get('/api/livres')
+    this.livres = res.data
     // const res2 = await axios.get('/api/panier')
     // this.panier = res2.data
     try {
@@ -48,11 +48,11 @@ var app = new Vue({
   methods: {
     async addArticle (article) {
       const res = await axios.post('/api/article', article)
-      this.articles.push(res.data)
+      this.livres.push(res.data)
     },
     async updateArticle (newArticle) {
       await axios.put('/api/article/' + newArticle.id, newArticle)
-      const article = this.articles.find(a => a.id === newArticle.id)
+      const article = this.livres.find(a => a.id === newArticle.id)
       article.name = newArticle.name
       article.description = newArticle.description
       article.image = newArticle.image
@@ -60,12 +60,12 @@ var app = new Vue({
     },
     async deleteArticle (articleId) {
       await axios.delete('/api/article/' + articleId)
-      const index = this.articles.findIndex(a => a.id === articleId)
-      this.articles.splice(index, 1)
+      const index = this.livres.findIndex(a => a.id === articleId)
+      this.livres.splice(index, 1)
     },
     async pay () {
       await axios.post('/api/pay')
-      this.panier.articles = []
+      this.panier.livres = []
     },
     async login (user) {
       const res = await axios.post('/api/login', user)

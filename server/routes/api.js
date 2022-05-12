@@ -66,27 +66,32 @@ router.post('/login', async (req, res) => {
               // console.log(result);
               // res.json(result);
               //création de l'utilisateur à partir des infos trouvés
-              const user = result[0]
+                if (result.length > 0 ) {
 
-              if ( bcrypt.compare(password, user.pwd)) {
-                // alors connecter l'utilisateur
-                req.session.userId = user.id
-                res.json({
-                  id: user.id_user,
-                  pseudo: user.login
-                })
-              } else {
-                res.status(401).json({
-                  message: 'Mauvais mot de passe'
-                })
-                return
-              }
+                    const user = result[0]
+
+                    if (bcrypt.compare(password, user.pwd)) {
+                        // alors connecter l'utilisateur
+                        req.session.userId = user.id_user
+                        req.session.userPseudo = user.pseudo
+                        res.json({
+                            id: user.id_user,
+                            pseudo: user.login
+                        })
+                    } else {
+                        res.status(401).json({
+                            message: 'Mauvais mot de passe'
+                        })
+                        return
+                    }
+                }else {
+                    res.status(401).json({
+                        message: 'Utilisateur inexistant!'
+                    })
+                }
             }
         );
   } catch (error) {
-      res.status(401).json({
-        message: 'Utilisateur inexistant!'
-      })
     console.error('Problème de connexion, l\'erreur est la suivante:',
         error);
   }
@@ -307,11 +312,37 @@ router.delete('/panier/:articleId', (req, res) => {
 /**
  * Cette route envoie l'intégralité des articles du site
  */
-router.get('/articles', async (req, res) => {
+router.get('/livres', async (req, res) => {
   // const result = await client.query({
   //   text: 'SELECT * FROM articles'
   // })
   // res.json(result.rows)
+
+
+    try {
+        sequelize.authenticate();
+        await sequelize.query("SELECT *  FROM livre")
+            .then(
+                ([result,metadata])=>{
+                    // console.log(result);
+                    // res.json(result);
+                    //création de l'utilisateur à partir des infos trouvés
+                    if (result.length > 0 ) {
+                        res.json(result)
+
+                    }else {
+                        res.status(401).json({
+                            message: 'Aucun livre dans la bibliothèque pour l\'instant'
+                        })
+                    }
+                }
+            );
+    } catch (error) {
+        console.error('Problème de connexion, l\'erreur est la suivante:',
+            error);
+    }
+
+
 })
 
 /**

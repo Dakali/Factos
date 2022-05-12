@@ -1,45 +1,122 @@
 <!doctype>
 <html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <title>Mon magasin en ligne 100% bons plans</title>
-        <!-- Load Vue followed by Vue Router -->
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
-    <body>
-        <div id="app">
-          <header>
-            <h1>À la bonne franquette</h1>
-            <nav>
-              <router-link to='/'>Accueil</router-link>
-              <router-link to='/panier'>Panier</router-link>
+<head>
+    <meta charset="utf-8">
+    <title>Ef'thèque</title>
+    <!-- Load Vue followed by Vue Router -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<style>
+    header{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 5%;
+    }
+    h1 {
+        color: #004AAD;
+        text-align: center;
+    }
+    #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+    }
+    ul {
+        list-style-type: none;
+        overflow: hidden;
+        background-color: #333;
+    }
 
-              <div v-if="isConnected">
-                Bonjour {{ user.email }} !
-              </div>
-              <div v-else>
-                <router-link to='/register'>Register</router-link>
-                <router-link to='/login'>Login</router-link>
-              </div>
+    li {
+        float: left;
+    }
+
+    .search {
+        float: right;
+        /*width: ;*/
+    }
+
+   a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+    }
+
+    .inputSearch {
+        border: 2px solid #004AAD;
+        border-radius: 4px;
+        /*margin: 5px ;*/
+    }
+
+    /* Change the link color to #111 (black) on hover */
+    a:hover {
+        background-color: #004AAD;
+    }
+    .main{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    .navBar{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: #333;
+    }
+    p{
+        color: #004AAD;
+        font-size: smaller;
+    }
+    /*img{*/
+    /*    width: 50%;*/
+    /*    height: 50%;*/
+    /*}*/
+</style>
+<div id="app">
+    <header>
+        <div v-if="isConnected" class="main">
+            <img src="assets/l.png">
+            <p>Bonjour {{ user.pseudo }} !</p>
+            <nav class="navBar">
+                <router-link to='/'><img src="assets/home.png">Acceuil</router-link>
+                <router-link to='/panier'><img src="assets/cart.png">Panier</router-link>
+                <router-link to="#"><img src="assets/account.png"> Compte</router-link>
+                <router-link to='/login'><img src="assets/logout.png">Se déconnecter</router-link>
             </nav>
-          </header>
-          <main>
-            <router-view
-              :user="user"
-              :is-connected="isConnected"
-              :articles="articles"
-              :panier="panier"
-              @pay="pay"
-              @login="login"
-              @add-article="addArticle"
-              @delete-article="deleteArticle"
-              @update-article="updateArticle"
-            ></router-view>
-          </main>
         </div>
-        <script src="/vue-application.js"></script>
-    </body>
+        <div v-else class="main">
+            <h1>Bienvenue sur votre bibliothèque en ligne</h1>
+            <nav class="navBar">
+                        <router-link to='/login'>Se connecter</router-link>
+
+                        <router-link to='/register'>S'inscrire</router-link>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <router-view
+                :user="user"
+                :is-connected="isConnected"
+                :livres="livres"
+                :panier="panier"
+                @pay="pay"
+                @login="login"
+                @add-article="addArticle"
+                @delete-article="deleteArticle"
+                @update-article="updateArticle"
+        ></router-view>
+    </main>
+</div>
+<script src="/vue-application.js"></script>
+</body>
 </html>
