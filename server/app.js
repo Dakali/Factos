@@ -3,8 +3,10 @@ const session = require('express-session')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
-
 const apiRouter = require('./routes/api.js')
+//utilisation de jwt
+const jwt = require('jsonwebtoken')
+const keys = require('./settings/keys')
 
 const app = express()
 const {Sequelize} = require("sequelize");
@@ -24,6 +26,8 @@ try {
 
 app.use(logger('dev'))
 app.use(express.json())
+//réference à notre token
+app.set('key',keys.key)
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(session({ secret: 'grehjznejzkhgjrez', saveUninitialized: false, resave: false }))

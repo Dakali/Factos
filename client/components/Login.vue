@@ -13,6 +13,7 @@
             placeholder="Mot de passe"
         >
         <button type="submit">Se connecter</button>
+        <p>{{message}}</p>
 
       </div>
       <p>L3 P2024 Tous Droits Reservés {{new Date().getFullYear()}}</p>
@@ -23,8 +24,10 @@
 <script>
 module.exports = {
   props: {
+    message:null,
     livres: {},
-    panier: {type: Object}
+    panier: {type: Object},
+    isConnected : false
   },
   data() {
     return {

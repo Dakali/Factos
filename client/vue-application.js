@@ -2,12 +2,16 @@ const Home = window.httpVueLoader('./components/Home.vue')
 const Panier = window.httpVueLoader('./components/Panier.vue')
 const Register = window.httpVueLoader('./components/Register.vue')
 const Login = window.httpVueLoader('./components/Login.vue')
+const Account = window.httpVueLoader('./components/Account.vue')
+const SearchR = window.httpVueLoader('./components/SearchResult.vue')
 
 const routes = [
   { path: '/', component: Home },
   { path: '/panier', component: Panier },
   { path: '/register', component: Register },
-  { path: '/login', component: Login }
+  { path: '/login', component: Login },
+  { path: '/account', component: Account },
+  { name:"searchR",path: '/searchResult', component: SearchR },
 ]
 
 const router = new VueRouter({
@@ -24,8 +28,11 @@ var app = new Vue({
       updatedAt: null,
       livres: []
     },
+    message:null,
     user: {},
-    isConnected: false
+    isConnected: false,
+    type:null,
+    searchResult : [],
   },
   async mounted () {
     const res = await axios.get('/api/livres')
@@ -43,9 +50,13 @@ var app = new Vue({
       } else {
         console.log('error', err)
       }
+
     }
   },
   methods: {
+    logout(){
+      res.redirect('/');
+    },
     async addArticle (article) {
       const res = await axios.post('/api/article', article)
       this.livres.push(res.data)
@@ -68,10 +79,19 @@ var app = new Vue({
       this.panier.livres = []
     },
     async login (user) {
-      const res = await axios.post('/api/login', user)
-      this.user = res.data
-      this.isConnected = true
+      const res7 = await axios.post('/api/login', user)
+      this.user = res7.data
+      this.isConnected = true;
+      const res4 = await axios.get('/api/userType')
+      this.type = res4.data
       this.$router.push('/')
-    }
+
+    },
+    async search(info) {
+      const res5 = await axios.post('/api/search/'+ info)
+      this.searchResult = res5.data
+      console.log(this.searchResult)
+      this.$router.push({name:"searchR",params:{data:this.searchResult }})
+    },
   }
 })

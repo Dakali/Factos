@@ -11,11 +11,16 @@
 </head>
 <body>
 <style>
+    .row{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+    }
     header{
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 5%;
     }
     h1 {
         color: #004AAD;
@@ -28,20 +33,7 @@
         text-align: center;
         color: #2c3e50;
     }
-    ul {
-        list-style-type: none;
-        overflow: hidden;
-        background-color: #333;
-    }
 
-    li {
-        float: left;
-    }
-
-    .search {
-        float: right;
-        /*width: ;*/
-    }
 
    a {
         display: block;
@@ -51,22 +43,39 @@
         text-decoration: none;
     }
 
-    .inputSearch {
-        border: 2px solid #004AAD;
-        border-radius: 4px;
-        /*margin: 5px ;*/
-    }
+
 
     /* Change the link color to #111 (black) on hover */
     a:hover {
         background-color: #004AAD;
     }
+    .mainMenu{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 90%;
+        margin: 1%;
+        background-color: #333;
+    }
+    .mainMenu p {
+        color: white;
+    }
+
     .main{
         display: flex;
         justify-content: center;
         flex-direction: column;
         align-items: center;
+
     }
+    nav{
+        /*display: flex;*/
+        /*flex-direction: row;*/
+        /*justify-content: space-between;*/
+        /*padding: 30px;*/
+    }
+
+
     .navBar{
         display: flex;
         justify-content: space-around;
@@ -84,18 +93,19 @@
 </style>
 <div id="app">
     <header>
-        <div v-if="isConnected" class="main">
-            <img src="assets/l.png">
-            <p>Bonjour {{ user.pseudo }} !</p>
-            <nav class="navBar">
-                <router-link to='/'><img src="assets/home.png">Acceuil</router-link>
-                <router-link to='/panier'><img src="assets/cart.png">Panier</router-link>
-                <router-link to="#"><img src="assets/account.png"> Compte</router-link>
-                <router-link to='/login'><img src="assets/logout.png">Se déconnecter</router-link>
-            </nav>
+        <div v-if="isConnected" class="mainMenu">
+
+                    <router-link to='/'><img src="assets/home.png"><p>Acceuil</p></router-link>
+                    <router-link to='/panier'><img src="assets/cart.png"><p>Panier</p></router-link>
+                    <img src="assets/l.png">
+                    <router-link to="/account"><img src="assets/account.png"><p>Compte</p></router-link>
+                    <a @click="logout()"><img src="assets/logout.png"><p>Se déconnecter</p></a>
+
+
+
         </div>
         <div v-else class="main">
-            <h1>Bienvenue sur votre bibliothèque en ligne</h1>
+            <h1>EFREI Paris</h1>
             <nav class="navBar">
                         <router-link to='/login'>Se connecter</router-link>
 
@@ -109,8 +119,11 @@
                 :is-connected="isConnected"
                 :livres="livres"
                 :panier="panier"
+                :type="type"
+                :searchResult="searchResult"
                 @pay="pay"
                 @login="login"
+                @search="search"
                 @add-article="addArticle"
                 @delete-article="deleteArticle"
                 @update-article="updateArticle"

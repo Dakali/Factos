@@ -1,6 +1,5 @@
 <template>
   <div class="sectionLogin">
-    <img src="../assets/logo.png">
     <form @submit.prevent="createUser()">
       <div class="divLogin">
       <input
@@ -8,7 +7,6 @@
           v-model="pseudo"
           placeholder="Pseudo">
       <input
-          type="text"
       type="password" v-model="password"
       placeholder="Mot de passe"
       >
@@ -16,6 +14,7 @@
       </div>
       <p>L3 P2024 Tous Droits Reservés {{new Date().getFullYear()}}</p>
     </form>
+    <img src="../assets/logo.png">
   </div>
 </template>
 
@@ -23,7 +22,8 @@
 module.exports = {
   props: {
     articles: { type: Array, default: [] },
-    panier: { type: Object }
+    panier: { type: Object },
+    isConnected : false
   },
   data () {
     return {
@@ -45,7 +45,7 @@ module.exports = {
 }
 </script>
 
-</script>
+
 
 <style scoped>
 .sectionLogin {

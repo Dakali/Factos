@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
-// const articles = require('../data/articles.js')
 const bcrypt = require('bcrypt');
 
 const {Sequelize} = require("sequelize");
+const jwt = require("jsonwebtoken");
 const sequelize = new Sequelize("eftheque", "root", "",
     {
       dialect: "mysql",
@@ -72,11 +72,21 @@ router.post('/login', async (req, res) => {
 
                     if (bcrypt.compare(password, user.pwd)) {
                         // alors connecter l'utilisateur
+                        // const payload = {
+                        //     check:true
+                        // }
+                        // //définition de l'expiration du token de connexion
+                        // const token = jwt.sign(payload,keys,{
+                        //     expiresIn:'1h'
+                        // })
                         req.session.userId = user.id_user
                         req.session.userPseudo = user.pseudo
+                        // req.session.token = token
                         res.json({
                             id: user.id_user,
-                            pseudo: user.login
+                            pseudo: user.login,
+                            type:user.profil
+                            // token:token
                         })
                     } else {
                         res.status(401).json({
@@ -179,7 +189,7 @@ router.post('/register', async (req, res) => {
                     // TODO: store hash in a database
                     try{
                         sequelize.authenticate();
-                        sequelize.query("INSERT INTO user(`login`, `pwd`, `profil`, `actif`)  VALUES('"+pseudo+"','"+hash+"','ETUDIANT',1)")
+                        sequelize.query("INSERT INTO user(`login`, `pwd`, `profil`, `actif`)  VALUES('"+pseudo+"','"+hash+"','ADMIN',1)")
                             .then(
                                 ([result,metadata])=> {
                                     console.log(hash);
@@ -252,11 +262,44 @@ router.post('/register', async (req, res) => {
   // res.send('ok')
 })
 
+router.get('/userType', async (req, res) => {
+    try{
+        sequelize.authenticate();
+        sequelize.query("SELECT profil FROM user WHERE id_user = '"+req.session.userId+"' ")
+            .then(
+                ([result,metadata])=> {
+                    console.log("taille: "+result.length);
+                    console.log("res: "+result[0].profil);
+                    if (result.length > 0){res.send(result[0].profil)}
+
+                })
+
+    }catch (error){
+        res.status(401).json({
+            message: 'Une erreur lors de la création du compte est survenue! Veuillez réessayer!'
+        })
+    }
+})
+
 router.get('/me', async (req, res) => {
   if (typeof req.session.userId === 'undefined') {
     res.status(401).json({ message: 'not connected' })
     return
   }
+    try{
+        sequelize.authenticate();
+        sequelize.query("SELECT * FROM user WHERE id_user = '"+req.session.userId+"' ")
+            .then(
+                ([result,metadata])=> {
+                    // console.log(result);
+                    res.send(result)
+                })
+
+    }catch (error){
+        res.status(401).json({
+            message: 'Une erreur lors de la création du compte est survenue! Veuillez réessayer!'
+        })
+    }
 
   // const result = await client.query({
   //   text: 'SELECT id, email FROM users WHERE id=$1',
@@ -279,6 +322,24 @@ router.get('/panier', (req, res) => {
  */
 router.post('/panier', (req, res) => {
   res.status(501).json({ message: 'Not implemented' })
+})
+
+router.post('/search/:info', async(req, res) => {
+    var info = req.params.info;
+    try{
+        sequelize.authenticate();
+        sequelize.query("SELECT * FROM livre WHERE title LIKE '%"+info+"%' OR auth LIKE '%"+info+"%' ")
+            .then(
+                ([result,metadata])=> {
+                    // console.log(result);
+                    res.send(result).json()
+                })
+
+    }catch (error){
+        res.status(401).json({
+            message: 'Une erreur lors de la création du compte est survenue! Veuillez réessayer!'
+        })
+    }
 })
 
 /*

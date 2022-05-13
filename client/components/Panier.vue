@@ -2,8 +2,8 @@
   <div>
     <h2>Mon Panier</h2>
     <ul>
-      <li v-for="article of panier.articles" :key="article.id">
-        {{ find(article.id).name}} - {{ find(article.id).description }}
+      <li v-for="livre of panier.livres" :key="livre.id_livre">
+        {{ find(livre.id_livre).title}} - {{ find(livre.id_livre).description }}
       </li>
     </ul>
     <button @click="pay" v-if="isConnected">Payer</button>
@@ -14,7 +14,7 @@
 <script>
 module.exports = {
   props: {
-    articles: { type: Array, default: [] },
+    livres: { type: Array, default: [] },
     panier: { type: Object },
     isConnected: { type: Boolean }
   },
@@ -26,7 +26,7 @@ module.exports = {
   },
   methods: {
     find (articleId) {
-      return this.articles.find(article => article.id === articleId)
+      return this.livres.find(livre => livre.id_livre === livreID)
     },
     pay () {
       this.$emit('pay')
