@@ -4,6 +4,7 @@ const Register = window.httpVueLoader('./components/Register.vue')
 const Login = window.httpVueLoader('./components/Login.vue')
 const Account = window.httpVueLoader('./components/Account.vue')
 const SearchR = window.httpVueLoader('./components/SearchResult.vue')
+const AddForm = window.httpVueLoader('./components/AddForm.vue')
 
 const routes = [
     {path: '/', component: Home},
@@ -12,6 +13,7 @@ const routes = [
     {path: '/login', component: Login},
     {path: '/account', component: Account},
     {name: "searchR", path: '/searchResult', component: SearchR},
+    {name: "addForm", path: '/addForm', component: AddForm},
 ]
 
 const router = new VueRouter({
@@ -58,7 +60,6 @@ var app = new Vue({
         async getBorowed() {
             const res = await axios.get('api/borowedBooks')
             this.borowedBooks = res.data
-            console.log("yooo"+this.borowedBooks)
         },
          logout() {
              axios.get('api/logout')
@@ -100,5 +101,9 @@ var app = new Vue({
             console.log(this.searchResult)
             this.$router.push({name: "searchR", params: {data: this.searchResult}})
         },
+        adminAddBook(bookInfo){
+            axios.post('/api/addBook',bookInfo)
+            this.$router.push('/')
+        }
     }
 })

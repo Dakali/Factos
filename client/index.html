@@ -11,12 +11,6 @@
 </head>
 <body>
 <style>
-    .row{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-direction: row;
-    }
     header{
         display: flex;
         justify-content: center;
@@ -43,9 +37,6 @@
         text-decoration: none;
     }
 
-
-
-    /* Change the link color to #111 (black) on hover */
     a:hover {
         background-color: #004AAD;
     }
@@ -54,8 +45,14 @@
         justify-content: space-between;
         align-items: center;
         width: 90%;
-        margin: 1%;
-        /*background-color: #333;*/
+
+        border-radius: 1%;
+        overflow: hidden;
+        position: -webkit-sticky; /* Safari */
+        position: fixed;
+        top: 0;
+        z-index: 2;
+        background-color: #000;
     }
     .mainMenu p {
         color: white;
@@ -80,19 +77,16 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        background-color: #333;
+        background-color: #000;
     }
     p{
         color: #004AAD;
         font-size: smaller;
     }
-    /*img{*/
-    /*    width: 50%;*/
-    /*    height: 50%;*/
-    /*}*/
+
 </style>
 <div id="app">
-    <header>
+    <header >
         <div v-if="isConnected" class="mainMenu">
 
                     <router-link to='/'><img src="assets/home.png"><p>Acceuil</p></router-link>
@@ -128,6 +122,7 @@
                 @dlt-cart="deleteFromCart"
                 @borow="borow"
                 @get-borow="getBorowed"
+                @add-book="adminAddBook"
         ></router-view>
     </main>
 </div>

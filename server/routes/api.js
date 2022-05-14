@@ -199,6 +199,19 @@ router.get('/me', async (req, res) => {
     // res.json(result.rows[0])
 })
 
+router.post('/addBook',(req,res)=>{
+
+    try {
+        sequelize.authenticate()
+        sequelize.query("INSERT INTO `livre`( `title`, `auth`, `description`, `qty`, `img`, `categories`) VALUES ('"+req.body.title+"','"+req.body.auth+"','"+req.body.description+"',"+req.body.qty+",'"+req.body.img+"','"+req.body.categorie+"')")
+        res.send('Livre ajouté')
+    }catch (e) {
+        res.status(401).json({
+            message: 'Une erreur est survenue lors de la récupération du panier ! Veuillez réessayer!'
+        })
+    }
+})
+
 // on définit une variable de session qui contient le panier de l'utilisateur
 router.get('/panierId', (req, res) => {
     try {

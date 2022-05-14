@@ -1,47 +1,37 @@
 <template>
   <div v-if="isConnected" class="container">
-    {{ isConnected }}{{ type }}
-
-
-      <div class="subDiv">
-        <h1>Notre Catalogue</h1>
-        <form @submit.prevent="bookSearch()" style="float: right">
-          <input type="text" placeholder="search" name="search" v-model="bookInfo">
-          <input type="submit">
-        </form>
-      </div>
-      <input type="button" value="ajouter un livre au catalogue" v-if="type === 'ADMIN'">
-      <div id="btnContainer">
-        <button class="btn" @click="listView()"><i class="fa fa-bars"></i> List</button>
-        <button class="btn active" @click="gridView()"><i class="fa fa-th-large"></i> Grid</button>
-      </div>
-      <br>
-      <div>
-        <article v-for="livre in livres" :key="livre.id" class="column">
-          <div class="book-img">
-            <img :srcset="livre.img">
-          </div>
-          <p class="info">{{ livre.title }}-{{ livre.auth }}</p>
-          <p class="info">{{ livre.auth }}</p>
+    <div class="subDiv">
+      <h1>Le Catalogue</h1>
+      <form @submit.prevent="bookSearch()" style="float: right">
+        <input type="text" placeholder="Titre ou Auteur" name="search" v-model="bookInfo">
+        <input type="submit" class="myBtn" value="Rechercher">
+      </form>
+    </div>
+    <router-link to="/addForm">
+    </router-link>
+    <div id="btnContainer">
+      <button class="btn" @click="listView()">Vue Liste</button>
+      <button class="btn active" @click="gridView()">Vue Grille</button>
+    </div>
+    <br>
+    <div>
+      <article v-for="livre in livres" :key="livre.id" class="column">
+        <div class="book-img">
+          <img :srcset="livre.img" class="img">
           <p class="description">{{ livre.description }}</p>
-          <div class="op">
-            <input type="button" value="Ajouter au panier" v-if="type === 'ETUDIANT' && livre.qty > 0" @click="addToCart(livre)">
-            <input type="button" value="Supprimer" v-if="type === 'ADMIN'">
-            <p>Stock : {{ livre.qty }}</p>
-          </div>
-        </article>
-      </div>
-
-
-
-    <!--    <form @submit.prevent="addArticle">-->
-    <!--      <h2>Nouveau produit à ajouter</h2>-->
-    <!--      <input type="text" v-model="newArticle.name" placeholder="Nom du produit" required>-->
-    <!--      <input type="number" v-model="newArticle.price" placeholder="Prix" required>-->
-    <!--      <textarea type="text" v-model="newArticle.description" required></textarea>-->
-    <!--      <input type="text" v-model="newArticle.image" placeholder="Lien vers l'image">-->
-    <!--      <button type="submit">Ajouter</button>-->
-    <!--    </form>-->
+        </div>
+        <p class="info">{{ livre.title }}-{{ livre.auth }}</p>
+        <div class="op" v-if="type === 'ETUDIANT'">
+          <input type="button" class="oBtn" value="Ajouter au panier" v-if="livre.qty > 0" @click="addToCart(livre)">
+          <input type="button" class="oBtnC" value="Ajouter au panier" v-else @click="addToCart(livre)">
+          <p>Stock : {{ livre.qty }}</p>
+        </div>
+        <div class="op" v-if="type === 'ADMIN'">
+          <input type="button" class="oBtn" value="Supprimer" v-if="type === 'ADMIN'">
+          <p>Stock : {{ livre.qty }}</p>
+        </div>
+      </article>
+    </div>
   </div>
 </template>
 
@@ -56,11 +46,11 @@ module.exports = {
   },
   data() {
     return {
-
+      badgePanier : 0,
       bookInfo: '',
       bookForCart: {
         id_livre: -1,
-        qty : 1
+        qty: 1
       }
     }
   },
@@ -72,7 +62,7 @@ module.exports = {
     async bookSearch() {
       this.$emit('search', this.bookInfo)
     },
-    
+
     listView() {
       let elt = this.$el.getElementsByClassName("column");
       for (let i = 0; i < elt.length; i++) {
@@ -103,7 +93,7 @@ module.exports = {
         });
       }
     },
-    addToCart (livre) {
+    addToCart(livre) {
       this.bookForCart.id_livre = livre.id_livre
       this.$emit('add-book-cart', this.bookForCart)
     }
@@ -113,25 +103,50 @@ module.exports = {
 </script>
 
 <style scoped>
-.container{
+.container {
   margin: 5%;
 }
+
 * {
   box-sizing: border-box;
 }
 
-.subDiv{
+.subDiv {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-top: 10%;
 }
+
 .column {
   float: left;
   width: 50%;
   padding: 10px;
   border: #004AAD 1px solid;
+
+  /*max-width: 300px;*/
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  margin: auto;
+  text-align: center;
+  font-family: arial;
 }
 
+.info {
+  color: #004AAD;
+  font-size: 22px;
+}
+
+.myBtn {
+  border: none;
+  color: white;
+  padding: 14px 28px;
+  cursor: pointer;
+  background-color: #000;
+}
+
+.myBtn:hover {
+  background-color: #004AAD;
+}
 
 input[type=text] {
   background-color: #004AAD;
@@ -140,11 +155,15 @@ input[type=text] {
   background-repeat: no-repeat;
   /*padding-left: 40px;*/
   color: white;
-  border: 3px solid #004AAD;
+  border: 3px solid #333;
   border-radius: 4px;
   padding: 12px 40px;
   margin: 8px 0;
   box-sizing: border-box;
+}
+
+.img {
+  width: 250px;
 }
 
 .btn {
@@ -164,5 +183,48 @@ input[type=text] {
   color: white;
 }
 
+.oBtn {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.oBtnC {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: gray;
+  text-align: center;
+  cursor: not-allowed;
+  width: 100%;
+  font-size: 18px;
+}
+
+.oBtn:hover {
+  opacity: 0.7;
+}
+
+.description {
+  position: absolute;
+  bottom: 0;
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  width: 100%;
+  padding: 050px;
+}
+
+.book-img {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
 
 </style>

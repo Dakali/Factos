@@ -14,7 +14,6 @@
         >
         <button type="submit">Se connecter</button>
         <p>{{ message }}</p>
-        <%= message%>
       </div>
       <p>L3 P2024 Tous Droits Reservés {{ new Date().getFullYear() }}</p>
     </form>

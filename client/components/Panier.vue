@@ -1,7 +1,8 @@
 <template>
   <div class="container">
-    <h2>Mon Panier</h2>
+
     <div class="cartBoard">
+      <h1>Mon Panier</h1>
       <hr>
       <article v-for="livre of panier.livres" :key="livre.id_pi" class="cartItem">
         <img :srcset="livre.img">
@@ -11,7 +12,6 @@
         <input type="button" @click="borow(livre)" value="Emprunter">
       </article>
     </div>
-    <!--    <router-link to="/login" v-else>Se connecter pour payer</router-link>-->
   </div>
 </template>
 
@@ -55,6 +55,12 @@ module.exports = {
 <style scoped>
 .container {
   margin: 5%;
+}
+* {
+  box-sizing: border-box;
+}
+.cartBoard{
+  margin-top: 10%;
 }
 
 .cartItem {
