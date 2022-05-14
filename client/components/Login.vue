@@ -13,21 +13,22 @@
             placeholder="Mot de passe"
         >
         <button type="submit">Se connecter</button>
-        <p>{{message}}</p>
-
+        <p>{{ message }}</p>
+        <%= message%>
       </div>
-      <p>L3 P2024 Tous Droits Reservés {{new Date().getFullYear()}}</p>
+      <p>L3 P2024 Tous Droits Reservés {{ new Date().getFullYear() }}</p>
     </form>
   </div>
 </template>
 
 <script>
 module.exports = {
+  name: "login",
   props: {
-    message:null,
+    message: null,
     livres: {},
     panier: {type: Object},
-    isConnected : false
+    isConnected: false
   },
   data() {
     return {
@@ -81,10 +82,12 @@ button {
   width: 100%;
   cursor: pointer;
 }
-p{
+
+p {
   color: #004AAD;
   font-size: smaller;
 }
+
 img {
   width: 300px;
   height: 300px;

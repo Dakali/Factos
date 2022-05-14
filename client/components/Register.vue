@@ -20,6 +20,7 @@
 
 <script>
 module.exports = {
+  name: "Register",
   props: {
     articles: { type: Array, default: [] },
     panier: { type: Object },

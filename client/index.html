@@ -55,7 +55,7 @@
         align-items: center;
         width: 90%;
         margin: 1%;
-        background-color: #333;
+        /*background-color: #333;*/
     }
     .mainMenu p {
         color: white;
@@ -121,12 +121,13 @@
                 :panier="panier"
                 :type="type"
                 :searchResult="searchResult"
-                @pay="pay"
                 @login="login"
                 @search="search"
-                @add-article="addArticle"
-                @delete-article="deleteArticle"
-                @update-article="updateArticle"
+                @get-cart="getCart"
+                @add-book-cart="addBookToCart"
+                @dlt-cart="deleteFromCart"
+                @borow="borow"
+                @get-borow="getBorowed"
         ></router-view>
     </main>
 </div>

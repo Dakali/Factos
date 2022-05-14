@@ -1,39 +1,71 @@
 <template>
-  <div>
+  <div class="container">
     <h2>Mon Panier</h2>
-    <ul>
-      <li v-for="livre of panier.livres" :key="livre.id_livre">
-        {{ find(livre.id_livre).title}} - {{ find(livre.id_livre).description }}
-      </li>
-    </ul>
-    <button @click="pay" v-if="isConnected">Payer</button>
-    <router-link to="/login" v-else>Se connecter pour payer</router-link>
+    <div class="cartBoard">
+      <hr>
+      <article v-for="livre of panier.livres" :key="livre.id_pi" class="cartItem">
+        <img :srcset="livre.img">
+        <p>Quantité : {{ livre.qty }}</p>
+        <p>ID commande : {{ livre.id_pi }}</p>
+        <input type="button" @click="deleteFromCart(livre)" value="retirer du panier">
+        <input type="button" @click="borow(livre)" value="Emprunter">
+      </article>
+    </div>
+    <!--    <router-link to="/login" v-else>Se connecter pour payer</router-link>-->
   </div>
 </template>
 
 <script>
 module.exports = {
+  name: "Cart",
   props: {
-    livres: { type: Array, default: [] },
-    panier: { type: Object },
-    isConnected: { type: Boolean }
+    livres: {type: Array, default: []},
+    panier: {type: Object},
+    isConnected: {type: Boolean}
   },
-  data () {
+  data() {
     return {
+      bookInCart: {
+        id_item: -1,
+        id_livre:1
+      }
     }
   },
-  async mounted () {
+  async mounted() {
+    this.$emit('get-cart')
   },
   methods: {
-    find (articleId) {
-      return this.livres.find(livre => livre.id_livre === livreID)
+    // showUs(livre) {
+    //   this.bookInCart.id_item = livre.id_pi
+    //   console.log("yoooooo "+this.bookInCart.id_item)
+    // },
+    deleteFromCart(livre) {
+      this.bookInCart.id_item = livre.id_pi
+      this.$emit('dlt-cart', this.bookInCart.id_item)
     },
-    pay () {
-      this.$emit('pay')
+    borow(livre){
+      this.bookInCart.id_livre = livre.id_livre
+      this.bookInCart.id_item = livre.id_pi
+      this.$emit('borow', this.bookInCart)
     }
   }
 }
 </script>
 
 <style scoped>
+.container {
+  margin: 5%;
+}
+
+.cartItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px;
+}
+
+.cartItem img {
+  width: 150px;
+  height: 150px;
+}
 </style>

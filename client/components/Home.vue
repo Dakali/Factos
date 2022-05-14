@@ -25,60 +25,13 @@
           <p class="info">{{ livre.auth }}</p>
           <p class="description">{{ livre.description }}</p>
           <div class="op">
-            <input type="button" value="Ajouter au panier" v-if="type === 'ETUDIANT'">
+            <input type="button" value="Ajouter au panier" v-if="type === 'ETUDIANT' && livre.qty > 0" @click="addToCart(livre)">
             <input type="button" value="Supprimer" v-if="type === 'ADMIN'">
             <p>Stock : {{ livre.qty }}</p>
           </div>
         </article>
       </div>
 
-
-
-    <!--    <h1>Notre Catalogue de livres</h1>-->
-    <!--    <article v-for="livre in livres" :key="livre.id" class="card">-->
-    <!--      <div  class="book-img">-->
-    <!--        <img  :srcset="livre.img">-->
-    <!--      </div>-->
-    <!--      <p class="info">{{ livre.title }}-{{ livre.auth }}</p>-->
-    <!--      <p class="info">{{ livre.auth }}</p>-->
-    <!--      <p class="description">{{ livre.description }}</p>-->
-    <!--      <div class="op">-->
-    <!--        <input type="button" value="Emprunter">-->
-    <!--        <p>Stock : {{ livre.qty }}</p>-->
-    <!--      </div>-->
-    <!--    </article>-->
-
-
-    <!--    <div class="card-content">-->
-    <!--      <div class="article-img">-->
-    <!--        <div :style="{ backgroundImage: 'url(' + livre.img + ')' }" class="img">-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--      <div class="article-content" v-if="editingArticle.id !== livre.id">-->
-    <!--        <div class="article-title">-->
-    <!--          <h2>{{ livre.title }}</h2>-->
-    <!--          <h4>{{ livre.auth }}</h4>-->
-    <!--        </div>-->
-    <!--        <p>{{ livre.description }}</p>-->
-    <!--        <div class="options">-->
-    <!--          <span>Emprunter</span>-->
-    <!--          &lt;!&ndash;              <button @click="deleteArticle(livre.id_livre)">Supprimer</button>&ndash;&gt;-->
-    <!--          &lt;!&ndash;              <button @click="editArticle(livre)">Modifier</button>&ndash;&gt;-->
-    <!--        </div>-->
-    <!--        <p>qte : {{ livre.qty }}</p>-->
-    <!--      </div>-->
-    <!--      &lt;!&ndash;        <div class="article-content" v-else>&ndash;&gt;-->
-    <!--      &lt;!&ndash;          <div class="article-title">&ndash;&gt;-->
-    <!--      &lt;!&ndash;            <h2><input type="text" v-model="editingArticle.name"> - <input type="number" v-model="editingArticle.price"></h2>&ndash;&gt;-->
-    <!--      &lt;!&ndash;            <div>&ndash;&gt;-->
-    <!--      &lt;!&ndash;              <button @click="sendEditArticle()">Valider</button>&ndash;&gt;-->
-    <!--      &lt;!&ndash;              <button @click="abortEditArticle()">Annuler</button>&ndash;&gt;-->
-    <!--      &lt;!&ndash;            </div>&ndash;&gt;-->
-    <!--      &lt;!&ndash;          </div>&ndash;&gt;-->
-    <!--      &lt;!&ndash;          <p><textarea v-model="editingArticle.description"></textarea></p>&ndash;&gt;-->
-    <!--      &lt;!&ndash;          <input type="text" v-model="editingArticle.image" placeholder="Lien vers l'image">&ndash;&gt;-->
-    <!--      &lt;!&ndash;        </div>&ndash;&gt;-->
-    <!--    </div>-->
 
 
     <!--    <form @submit.prevent="addArticle">-->
@@ -94,6 +47,7 @@
 
 <script>
 module.exports = {
+  name: "Home",
   props: {
     livres: {type: Array, default: []},
     panier: {type: Object},
@@ -102,53 +56,23 @@ module.exports = {
   },
   data() {
     return {
-      newArticle: {
-        name: '',
-        description: '',
-        image: '',
-        price: 0
-      },
-      editingArticle: {
-        id: -1,
-        name: '',
-        description: '',
-        image: '',
-        price: 0
-      },
+
       bookInfo: '',
+      bookForCart: {
+        id_livre: -1,
+        qty : 1
+      }
     }
+  },
+  async mounted() {
+    const res = await axios.get('/api/livres')
+    this.livres = res.data
   },
   methods: {
     async bookSearch() {
       this.$emit('search', this.bookInfo)
     },
-    addArticle() {
-      this.$emit('add-article', this.newArticle)
-    },
-    deleteArticle(articleId) {
-      this.$emit('delete-article', articleId)
-    },
-    editArticle(article) {
-      this.editingArticle.id = article.id
-      this.editingArticle.name = article.name
-      this.editingArticle.description = article.description
-      this.editingArticle.image = article.image
-      this.editingArticle.price = article.price
-    },
-    sendEditArticle() {
-      this.$emit('update-article', this.editingArticle)
-      this.abortEditArticle()
-    },
-    abortEditArticle() {
-      this.editingArticle = {
-        id: -1,
-        name: '',
-        description: '',
-        image: '',
-        price: 0
-      }
-    },
-
+    
     listView() {
       let elt = this.$el.getElementsByClassName("column");
       for (let i = 0; i < elt.length; i++) {
@@ -179,6 +103,10 @@ module.exports = {
         });
       }
     },
+    addToCart (livre) {
+      this.bookForCart.id_livre = livre.id_livre
+      this.$emit('add-book-cart', this.bookForCart)
+    }
 
   }
 }
