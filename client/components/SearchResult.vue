@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <h1>Resultat de la recherche</h1>
+    <h1>Facts explorer</h1>
     <hr>
     <div class="subDiv">
-      <input type="button" value="Retour au catalogue">
+      <router-link to="/">Nouvelle recherche</router-link>
     </div>
     <hr>
     <div id="btnContainer1">
@@ -12,18 +12,16 @@
     </div>
     <br>
     <div class="row">
-      <article v-for="r in searchResult" :key="r.id_livre" class="column">
-        <div class="book-img">
-          <img :srcset="r.img">
-        </div>
-        <p class="info">{{ r.title }}-{{ r.auth }}</p>
-        <p class="info">{{ r.auth }}</p>
-        <p class="description">{{ r.description }}</p>
-        <div class="op">
-          <input type="button" class="btn" value="Ajouter au panier" v-if="type === 'ETUDIANT'">
-          <input type="button" class="btn" value="Supprimer" v-if="type === 'ADMIN'">
-          <p>Stock : {{ r.qty }}</p>
-        </div>
+      <article v-for="r in searchResult" :key="r.claimReview[0].title" class="column">
+<!--        <div class="book-img">-->
+<!--          <img :srcset="r.img">-->
+<!--        </div>-->
+        <p class="info">TITRE : {{ r.claimReview[0].title}}</p>
+        <p class="info">Auteur : {{ r.claimReview[0].publisher.name }}</p>
+        <p class="description">Description : {{ r.text }}</p>
+        <p class="description">Statut : {{ r.claimReview[0].textualRating }}</p>
+        <p class="description">Source : {{ r.claimReview[0].url }}</p>
+
       </article>
     </div>
   </div>
@@ -33,12 +31,10 @@
 <script>
 module.exports = {
   name: "SearchR",
-  props: {
-    type: {type: String}
-  },
+
   data() {
     return {
-      searchResult: []
+      searchResult: [],
     }
   },
   created() {
@@ -77,7 +73,7 @@ module.exports = {
         });
       }
     },
-  }
+    }
 }
 
 </script>
@@ -99,7 +95,7 @@ module.exports = {
   float: left;
   width: 50%;
   padding: 10px;
-  border: #004AAD 1px solid;
+  border: #5e17eb 1px solid;
 }
 
 
@@ -117,8 +113,9 @@ module.exports = {
 }
 
 .btn.active {
-  background-color: #004AAD;
+  background-color: #5e17eb;
   color: white;
 }
+
 
 </style>

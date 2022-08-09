@@ -2,130 +2,42 @@
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <title>Ef'thèque</title>
+    <title>Factos</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.png">
+
     <!-- Load Vue followed by Vue Router -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/http-vue-loader/src/httpVueLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<style>
-    header{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    h1 {
-        color: #004AAD;
-        text-align: center;
-    }
-    #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-    }
 
-
-   a {
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-    }
-
-    a:hover {
-        background-color: #004AAD;
-    }
-    .mainMenu{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 90%;
-
-        border-radius: 1%;
-        overflow: hidden;
-        position: -webkit-sticky; /* Safari */
-        position: fixed;
-        top: 0;
-        z-index: 2;
-        background-color: #000;
-    }
-    .mainMenu p {
-        color: white;
-    }
-
-    .main{
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-
-    }
-    nav{
-        /*display: flex;*/
-        /*flex-direction: row;*/
-        /*justify-content: space-between;*/
-        /*padding: 30px;*/
-    }
-
-
-    .navBar{
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        background-color: #000;
-    }
-    p{
-        color: #004AAD;
-        font-size: smaller;
-    }
-
-</style>
 <div id="app">
-    <header >
-        <div v-if="isConnected" class="mainMenu">
 
-                    <router-link to='/'><img src="assets/home.png"><p>Acceuil</p></router-link>
-                    <router-link to='/panier'><img src="assets/cart.png"><p>Panier</p></router-link>
-                    <img src="assets/l.png">
-                    <router-link to="/account"><img src="assets/account.png"><p>Compte</p></router-link>
-                    <a @click="logout()"><img src="assets/logout.png"><p>Se déconnecter</p></a>
+    <div class="appHeader">
+<!--        <img src="assets/logo.png" class="imgLogo">-->
+<!--        <h2>You deserve the truth !</h2>-->
+<!--        <div>-->
+<!--            <h2>You deserve the truth !</h2>-->
+<!--        </div>-->
+        <router-link to="/"><img src="assets/factos.png"></router-link>
+        <router-link to="/about"><button class="btnLink">About</button></router-link>
+    </div>
 
 
 
-        </div>
-        <div v-else class="main">
-            <h1>EFREI Paris</h1>
-            <nav class="navBar">
-                        <router-link to='/login'>Se connecter</router-link>
-
-                        <router-link to='/register'>S'inscrire</router-link>
-            </nav>
-        </div>
-    </header>
     <main>
         <router-view
-                :user="user"
-                :is-connected="isConnected"
-                :livres="livres"
-                :panier="panier"
-                :type="type"
                 :searchResult="searchResult"
-                @login="login"
                 @search="search"
-                @get-cart="getCart"
-                @add-book-cart="addBookToCart"
-                @dlt-cart="deleteFromCart"
-                @borow="borow"
-                @get-borow="getBorowed"
-                @add-book="adminAddBook"
         ></router-view>
     </main>
 </div>
-<script src="/vue-application.js"></script>
+<script type="module" src="/vue-application.js">
+
+</script>
 </body>
 </html>

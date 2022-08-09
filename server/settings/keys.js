@@ -1,3 +1,3 @@
 module.exports = {
-    key : "L3P2024AMS"
+    key : "L3P2024ASM"
 }
